@@ -2,7 +2,7 @@
     "name": "eShopLite - dotnet-resiliency",
     "image": "mcr.microsoft.com/devcontainers/dotnet",
     "runArgs": [
-        "--name", "dotnet-compliance-project-container"
+        "--name", "dotnet-resiliency-project-container"
     ],
     "features": {
       "ghcr.io/devcontainers/features/dotnet:2": { "version": "8.0"},
