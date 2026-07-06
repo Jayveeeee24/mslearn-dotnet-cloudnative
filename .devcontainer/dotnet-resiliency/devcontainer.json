@@ -24,7 +24,8 @@
             "extensions": [
                 "ms-vscode.vscode-node-azure-pack",
                 "github.vscode-github-actions",
-                "ms-dotnettools.csdevkit"
+                "ms-dotnettools.csdevkit",
+                "eamodio.gitlens"
             ]
         }
     },
