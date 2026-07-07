@@ -37,6 +37,10 @@ docker login
 docker tag store artemisjayvee/storeimage
 docker tag products artemisjayvee/productservice
 
+# To create alias for local image to push in acr
+docker tag store $ACR_NAME.azurecr.io/storeimage:v1
+docker tag products $ACR_NAME.azurecr.io/productservice:v1
+
 # push docker image to docker hub
 docker push artemisjayvee/storeimage
 docker push artemisjayvee/productservice

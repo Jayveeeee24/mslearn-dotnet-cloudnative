@@ -47,6 +47,58 @@ kubectl scale --replicas=5 deployment/productsbackend
 # delete a pod deployed
 kubectl delete pod storefrontend-f9b6c6c77-q9xwg
 
+-----------------------------------------------------------------------------
+# Azure Kubernetes Service (AKS)
+
+# create the azure kubernetes service (aks)
+az aks create \
+  --resource-group $RESOURCE_GROUP \
+  --name $CLUSTER_NAME \
+  --node-count 1 \
+  --generate-ssh-keys \
+  --node-vm-size standard_b2as_v2 \
+  --network-plugin azure \
+  --attach-acr $ACR_NAME
+
+# get credentials to aks
+az aks get-credentials --name $CLUSTER_NAME --resource-group $RESOURCE_GROUP
+
+# command to check if the new aks can pull images from acr
+az aks check-acr --acr $ACR_NAME.azurecr.io --name $CLUSTER_NAME --resource-group $RESOURCE_GROUP
+
+# check status of aks
+kubectl get nodes -A
+
+# deploy ingress nginx into the aks
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.3/deploy/static/provider/cloud/deploy.yaml
+
+# check if ingress is ready
+kubectl get services --namespace ingress-nginx
+
+# deploy eShop app (FE + BE)
+kubectl apply -f deployment.yml
+
+# get deployments (blueprint/image)
+kubectl get deployments
+
+# get deployed services (instance/containers)
+kubectl get pods
+
+# get ip of the deployed service
+echo "http://$(kubectl get services --namespace ingress-nginx ingress-nginx-controller --output jsonpath='{.status.loadBalancer.ingress[0].ip}')"
+
+# monitor service with watch 
+kubectl get pods --selector=app=productservice --watch
+
+# remove deployment / rollback
+kubectl rollout undo deployment/productservice
+
+# Lists all running container instances inside nginx
+kubectl get pods -n ingress-nginx
+
+# Retrieves the complete configuration blueprint and routing rules for the eshop-ingress  
+kubectl get ingress eshop-ingress -o yaml
+
 ------------------------------------------------------------------------------
 ### LINKERD
 
