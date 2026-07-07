@@ -6,11 +6,47 @@ services:
     image: store:latest
     environment: 
       - ProductEndpoint=http://backend:8080
+      - ZIPKIN_URL=http://zipkin:9411   
+      - APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=d0e26729-58f3-4705-afcf-9a5f797b058e;IngestionEndpoint=https://indonesiacentral-0.in.applicationinsights.azure.com/;LiveEndpoint=https://indonesiacentral.livediagnostics.monitor.azure.com/;ApplicationId=fd24cc7b-3189-4d47-aba3-07682f002868 
     ports:
       - "32000:8080"
     depends_on: 
       - backend
+      - prometheus
+      - zipkin  
   backend:
     image: products:latest
     ports: 
-      - "32001:8080"
+      - "32001:8080" 
+    depends_on: 
+      - prometheus
+    environment: 
+      - ZIPKIN_URL=http://zipkin:9411    
+      - APPLICATIONINSIGHTS_CONNECTION_STRING=InstrumentationKey=d0e26729-58f3-4705-afcf-9a5f797b058e;IngestionEndpoint=https://indonesiacentral-0.in.applicationinsights.azure.com/;LiveEndpoint=https://indonesiacentral.livediagnostics.monitor.azure.com/;ApplicationId=fd24cc7b-3189-4d47-aba3-07682f002868 
+
+  prometheus:
+    image: prom/prometheus
+    container_name: prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    ports:
+      - 9090:9090
+    restart: unless-stopped
+    volumes:
+      - C:\@Personal\Learn\Repositories\mslearn-dotnet-cloudnative\dotnet-observability\prometheus:/etc/prometheus
+
+  grafana:
+    image: grafana/grafana
+    container_name: grafana
+    ports:
+      - 3000:3000
+    restart: unless-stopped
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=grafana
+    volumes:
+      - C:\@Personal\Learn\Repositories\mslearn-dotnet-cloudnative\dotnet-observability\grafana\datasource:/etc/grafana/provisioning/datasources
+  zipkin:
+    image: openzipkin/zipkin
+    ports:
+      - 9411:9411
