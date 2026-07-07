@@ -14,6 +14,9 @@ cd ./dotnet-docker
 # get docker images list
  docker images
 
+# list running containers
+ docker ps
+
 # build docker image from dockerfile
  cd ./dotnet-docker 
  docker build -t productsbackend:latest -f Products/Dockerfile .
@@ -21,8 +24,11 @@ cd ./dotnet-docker
 # run docker image into container
 docker run -it --rm -p 32001:8080  products
 
-# start the app using docker compose
+# start the containers in compose
 docker compose up
+
+# stop running containers in compose
+docker compose down
 
 # login to docker hub
 docker login
@@ -34,3 +40,6 @@ docker tag products artemisjayvee/productservice
 # push docker image to docker hub
 docker push artemisjayvee/storeimage
 docker push artemisjayvee/productservice
+
+# stop a running container
+docker stop 1aa78c737318
